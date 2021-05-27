@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, Flask
+from flask import render_template, request, jsonify, Flask, flash
 import flask
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
@@ -12,6 +12,14 @@ app.config['SECRET_KEY'] = "my secret key "
 class NamerForm(FlaskForm):
     name = StringField("What's yout name?", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+    #BooleanField, DateField, DateTimeField, DecimalField, FileField, HiddenField
+    #MultipleField, FieldList, FloatField, FormField, IntegerField, PasswordField
+    #RadioField, SelectField, SelectMultipleField, SubmitField, StringField, TextAreaField
+
+    ##Validators
+    #DataRequired, Email, EqualTo, InputRequired, IPAddress, Length, MacAddress, NumberRange
+    #Optional, Regexp, URL, UUID, AnyOf, NoneOf
 # priniting with jinja
 
 # FILTERS !!!!
@@ -62,6 +70,7 @@ def name():
     if form.validate_on_submit():
         name = form.name.data
         form.name.data = ''
+        flash("Form Submitted successfully")
     return render_template("name.html",
                            name = name,
                            form = form)
