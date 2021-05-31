@@ -1,19 +1,27 @@
-from flask import render_template, Flask, flash
+#everything should be installed in virtual env in git bash prompt
+from flask import render_template, Flask, flash, request
+from flask_mysqldb import MySQL
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import pytz  # 3rd party: $ pip install pytz
+from flask_migrate import Migrate
 
 # Create Flask Instance
 app = Flask(__name__)
 # Add Database
 #SQLit DB
-#app.config['SQLALCHEMY_DATABASE_UR'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 #MYSQL DB
-app.config['SQLALCHEMY_DATABASE_UR'] = 'mysql+pymysql://root:aimsol123@localhost/db_name/users'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:aimsol123@localhost/users'
 #initialize the database
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+
 #secret key
 app.config['SECRET_KEY'] = "my secret key "
 
@@ -22,18 +30,54 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    date_added = db.Column(db.DateTime, default=datetime.utcnow())
+    #flask integration
+    favorite_color = db.Column(db.String(120))
+    date_added = db.Column(db.DateTime, default=datetime.now(pytz.timezone('Asia/Karachi')))
 
     #Create a String
     def __repr__(self):
         return '<Name %r>' % self.name
+#db.create_all()
+#db.session.commit()
+'''
+in gitbash terminal 
+winpty python
+from <filename> import db
 db.create_all()
-db.session.commit()
+exit()
+'''
 
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
+    favorite_color = StringField("Favorite Color")
     submit = SubmitField("Submit")
+
+#update db records
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    form = UserForm()
+    name_to_update = Users.query.get_or_404(id)
+    if request.method == "POST":
+        name_to_update.name = request.form['name']
+        name_to_update.email = request.form['email']
+        name_to_update.favorite_color = request.form['favorite_color']
+        try:
+            db.session.commit()
+            flash("User updated successfully")
+            return render_template("update.html",
+                                   form=form,
+                                   name_to_update = name_to_update)
+        except:
+            flash("Error! Looks like there was a problem .... Try again")
+            return render_template("update.html",
+                                   form=form,
+                                   name_to_update=name_to_update)
+
+    else:
+        return render_template("update.html",
+                               form=form,
+                               name_to_update=name_to_update)
 
 # create a Form Class (first make secret key)
 class NamerForm(FlaskForm):
@@ -65,12 +109,14 @@ def add_user():
     if form.validate_on_submit():
         user = Users.query.filter_by(email=form.email.data).first()
         if user is None:
-            user = Users(name=form.name.data, email=form.email.data)
+            user = Users(name=form.name.data, email=form.email.data, favorite_color = form.favorite_color.data)
             db.session.add(user)
             db.session.commit()
         name = form.name.data
         form.name.data=''
         form.email.data=''
+        form.favorite_color.data=''
+
         flash("User added successfully.")
     our_users = Users.query.order_by(Users.date_added)
     return render_template("add_user.html",
