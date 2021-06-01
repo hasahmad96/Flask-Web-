@@ -8,22 +8,26 @@ from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pytz  # 3rd party: $ pip install pytz
+
 from flask_migrate import Migrate
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
+
 
 # Create Flask Instance
 app = Flask(__name__)
 # Add Database
 #SQLit DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 #MYSQL DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:aimsol123@localhost/users'
-#initialize the database
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
 
 #secret key
 app.config['SECRET_KEY'] = "my secret key "
+
+#initialize the database
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 #Create Model
 class Users(db.Model):
@@ -46,6 +50,29 @@ from <filename> import db
 db.create_all()
 exit()
 '''
+
+@app.route('/delete/<int:id>')
+def delete(id):
+    user_to_delete = Users.query.get_or_404(id)
+    name = None
+    form = UserForm()
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        flash("User Deleted Successfully")
+
+        our_users = Users.query.order_by(Users.date_added)
+        return render_template("add_user.html",
+                               name=name,
+                               form=form,
+                               our_users=our_users)
+
+    except:
+        flash("oopps, there was an error deleting the user")
+        return render_template("add_user.html",
+                               name=name,
+                               form=form,
+                               our_users=our_users)
 
 class UserForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
@@ -77,7 +104,8 @@ def update(id):
     else:
         return render_template("update.html",
                                form=form,
-                               name_to_update=name_to_update)
+                               name_to_update=name_to_update,
+                               id = id)
 
 # create a Form Class (first make secret key)
 class NamerForm(FlaskForm):

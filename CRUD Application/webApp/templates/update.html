@@ -51,6 +51,10 @@
         <br/>
         {{ form.submit(
         class="btn btn-secondary") }}
+
+        <br/>
+        <br/>
+        <a href="{{ url_for('delete', id=id) }}" class="btn btn-danger">Delete</a>
     </form>
 </div>
     <br/><br/>
