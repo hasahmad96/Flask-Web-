@@ -38,7 +38,7 @@ class Users(db.Model):
     favorite_color = db.Column(db.String(120))
     date_added = db.Column(db.DateTime, default=datetime.now(pytz.timezone('Asia/Karachi')))
 
-    #Create a String
+    #Create a String -------- put name on the screen
     def __repr__(self):
         return '<Name %r>' % self.name
 #db.create_all()
@@ -75,7 +75,7 @@ def delete(id):
                                our_users=our_users)
 
 class UserForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired()])
+    name = StringField("Writ your name", validators=[DataRequired()])
     email = StringField("Email", validators=[DataRequired()])
     favorite_color = StringField("Favorite Color")
     submit = SubmitField("Submit")
