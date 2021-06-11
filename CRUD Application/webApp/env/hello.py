@@ -29,11 +29,6 @@ app.config['SECRET_KEY'] = "my secret key "
 #initialize the database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-'''
-flask db init
-flask db migrate -m 'some message'
-flask db upgrade (to push into the db) 
-'''
 
 #Create Model
 class Users(db.Model):

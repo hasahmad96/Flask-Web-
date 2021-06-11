@@ -27,9 +27,10 @@ CREATE TABLE `users` (
   `name` varchar(200) NOT NULL,
   `email` varchar(120) NOT NULL,
   `date_added` datetime DEFAULT NULL,
+  `favorite_color` varchar(120) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +39,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'hasan','hasanahmad.aimsol@gmail.com','2021-05-31 08:49:03'),(2,'ahmed','ahmad@mail.com','2021-05-31 08:49:03'),(3,'hasan','hasahmad96@gmail.com','2021-05-31 08:49:03'),(4,'wahaj','has@mail.com','2021-05-31 10:08:40'),(5,'reverseshell','wahaj@mail.com','2021-05-31 17:07:43');
+INSERT INTO `users` VALUES (3,'hasan','hasahmad96@gmail.com','2021-05-31 08:49:03','black'),(4,'ahmed','has@mail.com','2021-05-31 10:08:40','None');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +52,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-31 18:51:44
+-- Dump completed on 2021-06-11 20:22:37
